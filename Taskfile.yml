@@ -1,0 +1,59 @@
+version: '3'
+
+vars:
+  APP_NAME: contactshare
+
+tasks:
+  default:
+    desc: List all available tasks
+    cmds:
+      - task --list
+
+  build:
+    desc: Build the application binary
+    cmds:
+      - go build -o {{.APP_NAME}}{{exeExt}} .
+    sources:
+      - "*.go"
+      - go.mod
+      - go.sum
+    generates:
+      - "{{.APP_NAME}}{{exeExt}}"
+
+  run:
+    desc: Run the application
+    deps: [build]
+    cmds:
+      - ./{{.APP_NAME}}{{exeExt}}
+
+  dev:
+    desc: Run the application without building
+    cmds:
+      - go run main.go
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - cmd: rm -f {{.APP_NAME}}{{exeExt}}
+  
+  fmt:
+    desc: Format Go code
+    cmds:
+      - go fmt ./...
+
+  lint:
+    desc: Run golangci-lint in Docker
+    cmds:
+      - docker run --rm -v {{toSlash .ROOT_DIR}}:/app -w /app golangci/golangci-lint:v2.7.2 golangci-lint run -v --timeout 5m
+
+  tidy:
+    desc: Tidy and verify dependencies
+    cmds:
+      - go mod tidy
+      - go mod verify
+ 
+  update-deps:
+    desc: Update all dependencies
+    cmds:
+      - go get -u ./...
+      - go mod tidy
