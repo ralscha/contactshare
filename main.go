@@ -212,9 +212,6 @@ func main() {
 	http.HandleFunc("/health", healthHandler)
 	http.HandleFunc("/favicon.ico", faviconHandler)
 
-	http.HandleFunc("/health", healthHandler)
-	http.HandleFunc("/favicon.ico", faviconHandler)
-
 	srv := &http.Server{
 		Addr:         ":" + config.Port,
 		ReadTimeout:  5 * time.Second,
